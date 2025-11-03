@@ -238,9 +238,8 @@ func (g *Game) createFleet() {
 	for row := range 5 {
 		for column := range 11 {
 
-			// Go doesn't have forward declarations so we initialize a value
-			// and override for each case
-			alienType := 0
+			// We forward declare the alienType
+			var alienType int
 			/*
 				// For each row, we create 3 types of aliens
 				// the first row is alien type 3
