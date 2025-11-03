@@ -26,6 +26,8 @@ const (
 	screenWidth  = 750
 	screenHeight = 750
 	fontSize     = 40
+	laserWidth   = 5.0
+	laserHeight  = 15.0
 )
 
 // We create an State enum to track our GameState
@@ -350,8 +352,10 @@ func (g *Game) updatePlaying() {
 		}
 	}
 	if g.moveRight() {
-		if int(g.ship.posX) >= (screenWidth - shipImage.Bounds().Dx()) {
-			g.ship.posX = float64(screenWidth - shipImage.Bounds().Dx())
+		// We calculate the rightward bound
+		bound := screenWidth - shipImage.Bounds().Dx()
+		if int(g.ship.posX) >= bound {
+			g.ship.posX = float64(bound)
 		} else {
 			g.ship.posX += g.ship.speed * 1
 		}
@@ -516,7 +520,7 @@ func (g *Game) resolveCollisions() {
 func (g *Game) drawLaser(screen *ebiten.Image) {
 	op := &ebiten.DrawImageOptions{}
 	for _, laser := range g.lasers {
-		vector.FillRect(laserImage, 0, 0, float32(5), float32(10), laserColor, false)
+		vector.FillRect(laserImage, 0, 0, laserWidth, laserHeight, laserColor, false)
 		op.GeoM.Translate(laser.posX, laser.posY)
 		screen.DrawImage(laserImage, op)
 		// We need to reset each time to update the positions individually
@@ -528,7 +532,7 @@ func (g *Game) drawLaser(screen *ebiten.Image) {
 func (g *Game) drawAlienLasers(screen *ebiten.Image) {
 	op := &ebiten.DrawImageOptions{}
 	for _, laser := range g.alienLaser {
-		vector.FillRect(laserImage, 0, 0, float32(5), float32(10), laserColor, false)
+		vector.FillRect(laserImage, 0, 0, laserWidth, laserHeight, laserColor, false)
 		op.GeoM.Translate(laser.posX, laser.posY)
 		screen.DrawImage(laserImage, op)
 		// We need to reset each time to update the positions individually
