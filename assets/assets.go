@@ -5,4 +5,4 @@ import (
 )
 
 //go:embed *.png
-var EmbeddedAssets embed.FS
+var Embedded embed.FS

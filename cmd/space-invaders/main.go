@@ -56,16 +56,18 @@ var fontFace *text.GoTextFaceSource
 // our images
 func initImage(filePath string) *ebiten.Image {
 	// We need to extract the file of interest from the embedded pngs
-	file, err := assets.EmbeddedAssets.ReadFile(filePath)
+	file, err := assets.Embedded.ReadFile(filePath)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
+	// We can now decode the image
 	img, _, err := image.Decode(bytes.NewReader(file))
-
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	// We can then return out the ebiten image
 	return ebiten.NewImageFromImage(img)
 }
 
