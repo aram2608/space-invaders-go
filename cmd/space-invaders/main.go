@@ -52,87 +52,49 @@ var laserImage = ebiten.NewImage(5, 10)
 // Text
 var fontFace *text.GoTextFaceSource
 
-// We have a couple init functions, a bunch of boiler plate unfortunately
-func init() {
+// Helper method to minimize boiler plate code for initing
+// our images
+func initImage(filePath string) *ebiten.Image {
 	// We need to extract the file of interest from the embedded pngs
-	shipeFile, err := assets.EmbeddedAssets.ReadFile("spaceship.png")
-	// We error check and return out incase we failed to extract the image
+	file, err := assets.EmbeddedAssets.ReadFile(filePath)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 
-	// Once extracted we try to decode it
-	img, _, err := image.Decode(bytes.NewReader(shipeFile))
+	img, _, err := image.Decode(bytes.NewReader(file))
 
-	// We error check again
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
-
-	// If everything is kosheer we can assign the ship image
-	shipImage = ebiten.NewImageFromImage(img)
+	return ebiten.NewImageFromImage(img)
 }
 
-func init() {
-	alien1File, err := assets.EmbeddedAssets.ReadFile("alien_1.png")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	img, _, err := image.Decode(bytes.NewReader(alien1File))
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	alien1 = ebiten.NewImageFromImage(img)
-}
-
-func init() {
-	alien2File, err := assets.EmbeddedAssets.ReadFile("alien_2.png")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	img, _, err := image.Decode(bytes.NewReader(alien2File))
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	alien2 = ebiten.NewImageFromImage(img)
-}
-
-func init() {
-	alien3File, err := assets.EmbeddedAssets.ReadFile("alien_3.png")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	img, _, err := image.Decode(bytes.NewReader(alien3File))
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	alien3 = ebiten.NewImageFromImage(img)
-}
-
-func init() {
-	aliens = [3]*ebiten.Image{alien1, alien2, alien3}
-}
-
-func init() {
+func initFont() *text.GoTextFaceSource {
 	source, err := text.NewGoTextFaceSource(bytes.NewReader(font.Font))
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 
-	fontFace = source
+	return source
 }
 
+// We have a couple init functions, a bunch of boiler plate unfortunately
 func init() {
+	// We init our ship image
+	shipImage = initImage("spaceship.png")
+	// We init all our aliens
+	alien1 = initImage("alien_1.png")
+	alien2 = initImage("alien_2.png")
+	alien3 = initImage("alien_3.png")
+
+	// we need to init the array of alien images
+	aliens = [3]*ebiten.Image{alien1, alien2, alien3}
+
+	// We need to see our random number generator
 	rand.NewSource(time.Now().UnixNano())
+
+	// Finally we init the font face
+	fontFace = initFont()
 }
 
 // We create an interfacte so that we can check all of the
@@ -361,8 +323,11 @@ func (g *Game) updatePlaying() {
 		}
 	}
 	if g.fireLaser() {
+		// If our laser is fired we calculate the x and y positions given
+		// the positioning of the space ship
 		x := float64(g.ship.posX) + (float64(shipImage.Bounds().Dx()) / 2)
 		y := float64(g.ship.posY) - 2.0
+		// We then create a Laser in place and append to the lasers slice
 		g.lasers = append(g.lasers, &Laser{
 			posX:   x,
 			posY:   y,
